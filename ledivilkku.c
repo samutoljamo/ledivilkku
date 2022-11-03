@@ -19,14 +19,38 @@ uint8_t animate_hex2dec(uint8_t character);
 void powerdown(void);
 
 
+const uint8_t number_matrix[1][15] PROGMEM = {{ 15, 15, 15,
+									15, 0, 15, 
+									15, 0, 15, 
+									15, 0, 15, 
+									15, 15, 15},
+									/*{0, 0, 15,
+									0, 0, 15,
+									0, 0, 15,
+									15, 15, 15, }*/};
+
+
+const uint8_t  number_map[15] PROGMEM = {0, 1, 2, 16, 17, 18, 32, 33, 34, 48, 49, 50, 64, 65, 66};
+
+
+
+
+
+
 extern const char animation[];
 uint8_t animationsequence=0;
+
 
 PGM_P a_ptr;   // pointer to animation script in PROGMEM
 uint16_t a_w;  // animation wait counter
 uint8_t a_e;   // animation selected effect
 
 
+void set_number(uint8_t number, uint8_t offset_x, uint8_t offset_y){
+	for(uint8_t i = 0; i < 15; i++){
+		l[pgm_read_byte(&number_map[i]) + offset_x + offset_y*16] = pgm_read_byte(&number_matrix[0][i]);
+	}
+}
 
 int main(void)
 {
@@ -36,10 +60,11 @@ for (uint8_t i=0;i<20;i++) tick();
 while (led_button);
 for (uint8_t i=0;i<20;i++) tick();
 
+led_init();
 
-for(uint16_t i = 0; i < 125;i++){
-    l[i]=15;
-}
+set_number(0, 13, 6);
+set_number(0, 9, 6);
+
 l2led();
 while(1){
     tick();
