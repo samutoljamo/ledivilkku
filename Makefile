@@ -4,7 +4,7 @@ CC=avr-gcc
 OBJCOPY=avr-objcopy
 CFLAGS=-Wall -g -Os -mmcu=${MCU}
 TARGET=main
-SRCS=ledivilkku.c animation.c led.c
+SRCS=ledivilkku.c led.c
 PROGRAMMER=usbtiny
 LFUSE=0xe4
 HFUSE=0xd9
