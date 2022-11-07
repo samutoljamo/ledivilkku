@@ -91,6 +91,7 @@ TCCR1B=0x08; // no clock yet
 TCNT1=0;     // clear counter (not really necessary after reset)
 OCR1A=256;   // 
 TIMSK=0x40;  // enable compare A interrupt
+TIMSK|=(1<<TOIE0);
 TIFR=0x40;	 // clear possible pending flag (not really necessary, but nice)
 TCCR1B=0x09; // start - full speed
 }
