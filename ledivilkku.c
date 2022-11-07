@@ -50,11 +50,33 @@ void set_number(uint8_t number, uint8_t offset_x, uint8_t offset_y){
 	for(uint8_t i = 0; i < 15; i++){
 		l[pgm_read_byte(&number_map[i]) + offset_x + offset_y*16] = pgm_read_byte(&number_matrix[0][i]);
 	}
+
+}
+
+void show_num(uint8_t number){
+  number = number % 100; // prevent weird things
+  uint8_t first_num = number % 10;
+  uint8_t second_num = number / 10;
+  set_number(first_num, 13, 6);
+  set_number(second_num, 9, 6);
+}
+
+void setup_mode(uint8_t mode){
+  if(mode == 0){
+    show_num(0);
+  } else if(mode == 1){
+    show_num(99);
+  }
+  l2led();
+  tick();
 }
 
 int main(void)
 {
 uint8_t pushcount;
+uint8_t mode = 0;
+uint8_t mode_state = 0; // used to track state inside a mode
+uint8_t mode_num = 0;
 setup();
 for (uint8_t i=0;i<20;i++) tick();
 while (led_button);
@@ -67,9 +89,53 @@ set_number(0, 9, 6);
 
 l2led();
 while(1){
-    tick();
-};
 
+  for (uint16_t i=0;i<ROWS*ROWS;i++) l[i]=0;
+  uint8_t mode_action = 0;
+  mode = mode % 2;
+  if (led_button) {
+      led_init();   // immediately blank display
+      tick();       // debounce push
+      pushcount=0;
+      while (led_button)
+          {
+            tick();
+            if (!(++pushcount)) pushcount--;
+            }
+            if (pushcount>200) powerdown();
+          else if(pushcount>100) {
+            mode++;
+            mode_state = 0;
+            mode_num = 0;
+            setup_mode(mode);
+
+          }
+          else if(pushcount>25) mode_action = 1;
+      tick();    // debounce release
+	   }
+    tick();
+    if(mode == 0 || mode == 1){
+      // stopwatch and timer work using the same principle
+      // timer just displays 99-num
+      if(mode_action == 1 && mode_state == 2){
+        mode_num = 0;
+      }
+      if(mode_action == 1 || ((mode == 1 && mode_num==0)) || (mode == 0 && mode_num==99)){
+        mode_state++;
+      } else if(mode_state == 1){
+        mode_num++; // this is obviously too fast
+      }
+
+      if(mode == 0){
+        show_num(mode_num);
+      } else {
+        show_num(99-mode_num);
+      }
+    }
+    l2led();
+}
+}
+/*
 while(1)
 	{
 	if (led_button)
@@ -253,7 +319,7 @@ if ((character>='a')&&(character<='f')) return(character+10-'a');
 if ((character>='A')&&(character<='F')) return(character+10-'A');
 return(0); // should never happen
 }
-
+*/
 
 
 void setup(void)
@@ -298,7 +364,7 @@ asm volatile("sleep\n");
 }
 
 
-
+/*
 void matrix(void)
 {
 while (led_phase==3);
@@ -333,7 +399,7 @@ for (uint8_t i=0;i<16;i++) if ((rand()&0x1f)==0x1f)
    }
 for (uint8_t i=0;i<7;i++) tick();
 l2led();
-}
+}*/
 
 /*
 while(1)

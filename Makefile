@@ -10,6 +10,7 @@ LFUSE=0xe4
 HFUSE=0xd9
 
 all:
+	mkdir bin
 	${CC} ${CFLAGS} -o ./bin/${TARGET}.bin ${SRCS}
 	${OBJCOPY} -j .text -j .data -O ihex ./bin/${TARGET}.bin ./bin/${TARGET}.hex
 
