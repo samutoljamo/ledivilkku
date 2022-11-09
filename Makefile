@@ -27,4 +27,4 @@ flash:
 	avrdude -p ${DUDE_MCU} -c ${PROGRAMMER} -U flash:w:./bin/${TARGET}.hex:i
 
 clean:
-	rm -f *.bin *.hex
+	rm -rf bin
