@@ -143,9 +143,6 @@ ISR(TIMER0_OVF_vect)
 int main(void)
 {
 	uint8_t pushcount;
-	void stop_timer()
-	{
-	}
 	setup();
 	for (uint8_t i = 0; i < 20; i++)
 		tick();
